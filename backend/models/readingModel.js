@@ -84,6 +84,18 @@ export const getReadingStats = async (userId, from, to) => {
     return rows[0];
 };
 
+export const getDailyAverages = async (userId, from, to) => {
+    const { rows } = await pool.query(
+        `SELECT reading_date AS date, ROUND(AVG(value), 1)::float AS average
+         FROM readings
+         WHERE user_id = $1 AND reading_date BETWEEN $2 AND $3
+         GROUP BY reading_date
+         ORDER BY reading_date`,
+        [userId, from, to]
+    );
+    return rows;
+};
+
 export const listReadingsOnDate = async (userId, date) => {
     const { rows } = await pool.query(
         `SELECT id, reading_date AS date, slot, value

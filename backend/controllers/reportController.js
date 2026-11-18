@@ -1,4 +1,4 @@
-import { getReadingStats, listReadingsOnDate } from '../models/readingModel.js';
+import { getDailyAverages, getReadingStats, listReadingsOnDate } from '../models/readingModel.js';
 import { getReportRanges, getToday } from '../utils/date.js';
 import { reportDateSchema } from '../validators/readingSchemas.js';
 
@@ -14,11 +14,12 @@ export const getReports = async (req, res) => {
         const dailyStats = await getReadingStats(req.userId, daily.from, daily.to);
         const dailyReadings = await listReadingsOnDate(req.userId, date);
         const monthToDateStats = await getReadingStats(req.userId, monthToDate.from, monthToDate.to);
+        const dailyAverages = await getDailyAverages(req.userId, monthToDate.from, monthToDate.to);
         const previousMonthStats = await getReadingStats(req.userId, previousMonth.from, previousMonth.to);
 
         return res.status(200).json({
             daily: { ...daily, ...dailyStats, readings: dailyReadings },
-            monthToDate: { ...monthToDate, ...monthToDateStats },
+            monthToDate: { ...monthToDate, ...monthToDateStats, dailyAverages },
             previousMonth: { ...previousMonth, ...previousMonthStats },
         });
     } catch (error) {

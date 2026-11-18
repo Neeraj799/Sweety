@@ -3,6 +3,7 @@ import ErrorMessage from '../components/ErrorMessage.jsx';
 import FormInput from '../components/FormInput.jsx';
 import PageLayout from '../components/PageLayout.jsx';
 import ReportCard from '../components/ReportCard.jsx';
+import ReportChart from '../components/ReportChart.jsx';
 import { api } from '../services/api.js';
 import { getToday } from '../utils/date.js';
 
@@ -54,11 +55,15 @@ const ReportsPage = () => {
             {reports === null ? (
                 <p className="text-gray-500 dark:text-gray-400">Loading…</p>
             ) : (
-                <div className="grid gap-4 md:grid-cols-3">
-                    <ReportCard title="Daily" report={reports.daily} />
-                    <ReportCard title="Month-to-date" report={reports.monthToDate} />
-                    <ReportCard title="Monthly" report={reports.previousMonth} />
-                </div>
+                <>
+                    <div className="grid gap-4 md:grid-cols-3">
+                        <ReportCard title="Daily" report={reports.daily} />
+                        <ReportCard title="Month-to-date" report={reports.monthToDate} />
+                        <ReportCard title="Monthly" report={reports.previousMonth} />
+                    </div>
+
+                    <ReportChart data={reports.monthToDate.dailyAverages} />
+                </>
             )}
         </PageLayout>
     );

@@ -9,6 +9,7 @@ A web app where a diabetes patient records up to 4 blood glucose readings a day 
 - Add, view, edit and delete readings (date, time slot, value in mg/dl)
 - Dashboard with pagination
 - Reports for a selected date: **Daily**, **Month-to-date** and **Monthly** (previous month), each with highest, lowest, average and count
+- Line chart (Recharts) of the daily average for the month
 - Validation on both the frontend and the backend:
     - value is a whole number between 40 and 600 mg/dl
     - one reading per time slot per day, at most 4 readings per day
@@ -19,7 +20,7 @@ A web app where a diabetes patient records up to 4 blood glucose readings a day 
 | Part     | Tech                                                                 |
 | -------- | -------------------------------------------------------------------- |
 | Backend  | Node.js 24, Express 5, PostgreSQL (`pg`, no ORM), bcrypt, JWT, Zod    |
-| Frontend | React 19, Vite, Tailwind CSS v4, React Router v7, axios, Zod, react-toastify |
+| Frontend | React 19, Vite, Tailwind CSS v4, React Router v7, axios, Zod, react-toastify, Recharts |
 
 ## Getting started
 
