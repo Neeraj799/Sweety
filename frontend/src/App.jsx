@@ -22,7 +22,8 @@ const App = () => {
                 <Route element={<ProtectedRoute />}>
                     <Route path="/" element={<DashboardPage />} />
                     <Route path="/readings/new" element={<AddReadingPage />} />
-                    <Route path="/readings/:id/edit" element={<EditReadingPage />} />                </Route>
+                    <Route path="/readings/:id/edit" element={<EditReadingPage />} />
+                </Route>
 
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
