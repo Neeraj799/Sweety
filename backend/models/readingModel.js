@@ -47,3 +47,19 @@ export const createReading = async (userId, date, slot, value) => {
     );
     return rows[0];
 };
+
+export const updateReading = async (userId, id, date, slot, value) => {
+    const { rows } = await pool.query(
+        `UPDATE readings
+         SET reading_date = $1, slot = $2, value = $3, updated_at = now()
+         WHERE id = $4 AND user_id = $5
+         RETURNING id, reading_date AS date, slot, value`,
+        [date, slot, value, id, userId]
+    );
+    return rows[0];
+};
+
+export const deleteReading = async (userId, id) => {
+    const { rowCount } = await pool.query('DELETE FROM readings WHERE id = $1 AND user_id = $2', [id, userId]);
+    return rowCount;
+};
