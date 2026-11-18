@@ -9,3 +9,5 @@ export const readingSchema = z.object({
     date: z.iso.date('Please choose a valid date.').refine((date) => date <= getToday(), 'Date cannot be in the future.'),
     slot: z.enum(SLOTS, 'Please choose a valid time slot.'),
 });
+
+export const reportDateSchema = z.iso.date('Please choose a valid date.');

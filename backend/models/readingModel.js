@@ -70,3 +70,27 @@ export const deleteReading = async (userId, id) => {
     const { rowCount } = await pool.query('DELETE FROM readings WHERE id = $1 AND user_id = $2', [id, userId]);
     return rowCount;
 };
+
+export const getReadingStats = async (userId, from, to) => {
+    const { rows } = await pool.query(
+        `SELECT COUNT(*)::int AS count,
+                MAX(value) AS highest,
+                MIN(value) AS lowest,
+                ROUND(AVG(value), 1)::float AS average
+         FROM readings
+         WHERE user_id = $1 AND reading_date BETWEEN $2 AND $3`,
+        [userId, from, to]
+    );
+    return rows[0];
+};
+
+export const listReadingsOnDate = async (userId, date) => {
+    const { rows } = await pool.query(
+        `SELECT id, reading_date AS date, slot, value
+         FROM readings
+         WHERE user_id = $1 AND reading_date = $2
+         ORDER BY array_position($3::text[], slot)`,
+        [userId, date, SLOTS]
+    );
+    return rows;
+};
