@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import AuthLayout from '../components/AuthLayout.jsx';
 import Button from '../components/Button.jsx';
 import ErrorMessage from '../components/ErrorMessage.jsx';
 import FormInput from '../components/FormInput.jsx';
 import { useAuth } from '../hooks/useAuth.js';
 import { api } from '../services/api.js';
+import { loginSchema } from '../validators/authSchemas.js';
 
 const LoginPage = () => {
     const { login } = useAuth();
@@ -21,11 +23,18 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        setLoading(true);
 
+        const { success, data: body, error: validationError } = loginSchema.safeParse(form);
+        if (!success) {
+            setError(validationError.issues[0].message);
+            return;
+        }
+
+        setLoading(true);
         try {
-            const { data } = await api.post('/auth/login', form);
+            const { data } = await api.post('/auth/login', body);
             login(data);
+            toast.success(`Welcome back, ${data.user.name}!`);
             navigate('/');
         } catch (err) {
             setError(err.response?.data?.error || 'Something went wrong. Please try again.');
@@ -36,7 +45,7 @@ const LoginPage = () => {
 
     return (
         <AuthLayout>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} noValidate className="space-y-4">
                 <FormInput
                     label="Email"
                     name="email"
@@ -44,7 +53,6 @@ const LoginPage = () => {
                     autoComplete="email"
                     value={form.email}
                     onChange={handleChange}
-                    required
                 />
                 <FormInput
                     label="Password"
@@ -53,7 +61,6 @@ const LoginPage = () => {
                     autoComplete="current-password"
                     value={form.password}
                     onChange={handleChange}
-                    required
                 />
 
                 <ErrorMessage message={error} />

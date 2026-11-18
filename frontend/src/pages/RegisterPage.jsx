@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import AuthLayout from '../components/AuthLayout.jsx';
 import Button from '../components/Button.jsx';
 import ErrorMessage from '../components/ErrorMessage.jsx';
 import FormInput from '../components/FormInput.jsx';
 import { useAuth } from '../hooks/useAuth.js';
 import { api } from '../services/api.js';
+import { registerSchema } from '../validators/authSchemas.js';
 
 const RegisterPage = () => {
     const { login } = useAuth();
@@ -21,11 +23,18 @@ const RegisterPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        setLoading(true);
 
+        const { success, data: body, error: validationError } = registerSchema.safeParse(form);
+        if (!success) {
+            setError(validationError.issues[0].message);
+            return;
+        }
+
+        setLoading(true);
         try {
-            const { data } = await api.post('/auth/register', form);
+            const { data } = await api.post('/auth/register', body);
             login(data);
+            toast.success('Account created.');
             navigate('/');
         } catch (err) {
             setError(err.response?.data?.error || 'Something went wrong. Please try again.');
@@ -36,10 +45,31 @@ const RegisterPage = () => {
 
     return (
         <AuthLayout>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <FormInput label="Name" name="name" type="text" autoComplete="off" value={form.name} onChange={handleChange} required />
-                <FormInput label="Email" name="email" type="email" autoComplete="off" value={form.email} onChange={handleChange} required />
-                <FormInput label="Password" name="password" type="password" autoComplete="new-password" value={form.password} onChange={handleChange} required />
+            <form onSubmit={handleSubmit} noValidate className="space-y-4">
+                <FormInput
+                    label="Name"
+                    name="name"
+                    type="text"
+                    autoComplete="off"
+                    value={form.name}
+                    onChange={handleChange}
+                />
+                <FormInput
+                    label="Email"
+                    name="email"
+                    type="email"
+                    autoComplete="off"
+                    value={form.email}
+                    onChange={handleChange}
+                />
+                <FormInput
+                    label="Password"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    value={form.password}
+                    onChange={handleChange}
+                />
 
                 <ErrorMessage message={error} />
 
