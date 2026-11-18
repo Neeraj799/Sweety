@@ -1,5 +1,6 @@
 import cors from 'cors';
 import express from 'express';
+import { authRouter } from './routes/authRoutes.js';
 import { initDb } from './db.js';
 
 const app = express();
@@ -10,6 +11,8 @@ app.use(express.json());
 app.get('/health', (req, res) => {
     res.json({ ok: true });
 });
+
+app.use('/auth', authRouter);
 
 app.use((req, res) => {
     res.status(404).json({ error: 'Not found' });
