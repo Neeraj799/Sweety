@@ -21,8 +21,28 @@ A web app where a diabetes patient records up to 4 blood glucose readings a day 
 | -------- | -------------------------------------------------------------------- |
 | Backend  | Node.js 24, Express 5, PostgreSQL (`pg`, no ORM), bcrypt, JWT, Zod    |
 | Frontend | React 19, Vite, Tailwind CSS v4, React Router v7, axios, Zod, react-toastify, Recharts |
+| Docker   | Docker Compose with PostgreSQL 17, the backend, and nginx serving the frontend |
 
-## Getting started
+## Run with Docker (quickest)
+
+You only need [Docker Desktop](https://www.docker.com/products/docker-desktop/). No Node.js or database setup needed.
+
+```bash
+docker compose up -d --build
+docker compose exec backend npm run seed
+```
+
+Open http://localhost:5173 and log in with `demo@sweety.com` / `secret123`.
+
+Docker uses ports 5173 and 4800, so stop any `npm run dev` servers first.
+
+| Command                     | What it does                          |
+| --------------------------- | ------------------------------------- |
+| `docker compose logs backend` | Show the backend's output           |
+| `docker compose down`       | Stop everything (data is kept)        |
+| `docker compose down -v`    | Stop everything and delete the database |
+
+## Run without Docker
 
 ### Requirements
 
@@ -103,6 +123,7 @@ backend/
   utils/         dates and tokens
   schema.sql     database tables
   seed.js        demo data
+  Dockerfile
 
 frontend/src/
   pages/         Login, Register, Dashboard, Add/Edit reading, Reports
@@ -110,4 +131,9 @@ frontend/src/
   context/       auth state (token + user)
   services/      axios instance (adds the token, handles expired logins)
   validators/    the same Zod rules as the backend
+frontend/
+  Dockerfile     builds the app, then serves it with nginx
+  nginx.conf
+
+docker-compose.yml   db + backend + frontend
 ```

@@ -1,0 +1,35 @@
+services:
+    db:
+        image: postgres:17-alpine
+        environment:
+            POSTGRES_USER: sweety
+            POSTGRES_PASSWORD: sweety
+            POSTGRES_DB: sweety
+        volumes:
+            - db-data:/var/lib/postgresql/data
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U sweety']
+            interval: 2s
+            retries: 15
+
+    backend:
+        build: ./backend
+        environment:
+            DATABASE_URL: postgres://sweety:sweety@db:5432/sweety
+            JWT_SECRET: local-docker-secret
+            PORT: 4800
+        ports:
+            - '4800:4800'
+        depends_on:
+            db:
+                condition: service_healthy
+
+    frontend:
+        build: ./frontend
+        ports:
+            - '5173:80'
+        depends_on:
+            - backend
+
+volumes:
+    db-data:
