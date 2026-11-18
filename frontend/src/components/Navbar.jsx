@@ -30,6 +30,9 @@ const Navbar = () => {
                     </NavLink>
                     <NavLink to="/readings/new" className={linkClass}>
                         Add reading
+                    </NavLink>
+                    <NavLink to="/reports" className={linkClass}>
+                        Reports
                     </NavLink>                </div>
 
                 <div className="flex items-center gap-3">
