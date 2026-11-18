@@ -1,17 +1,24 @@
 import { SLOTS } from '../constants/slots.js';
 import { pool } from '../db.js';
 
-export const listReadings = async (userId, from, to) => {
+export const listReadingsPage = async (userId, limit, offset) => {
     const { rows } = await pool.query(
         `SELECT id, reading_date AS date, slot, value
          FROM readings
          WHERE user_id = $1
-           AND ($2::date IS NULL OR reading_date >= $2)
-           AND ($3::date IS NULL OR reading_date <= $3)
-         ORDER BY reading_date DESC, array_position($4::text[], slot)`,
-        [userId, from, to, SLOTS]
+         ORDER BY reading_date DESC, array_position($2::text[], slot)
+         LIMIT $3 OFFSET $4`,
+        [userId, SLOTS, limit, offset]
     );
     return rows;
+};
+
+export const countReadings = async (userId) => {
+    const { rows } = await pool.query(
+        'SELECT COUNT(*)::int AS total FROM readings WHERE user_id = $1',
+        [userId]
+    );
+    return rows[0].total;
 };
 
 export const findReadingById = async (userId, id) => {

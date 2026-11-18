@@ -1,22 +1,26 @@
 import { SLOT_LABELS } from '../constants/slots.js';
 import {
+    countReadings,
     countReadingsOnDate,
     createReading,
     deleteReading,
     findReadingById,
     findReadingBySlot,
-    listReadings,
+    listReadingsPage,
     updateReading,
 } from '../models/readingModel.js';
 import { readingSchema } from '../validators/readingSchemas.js';
 
 export const getReadings = async (req, res) => {
     try {
-        const { from, to } = req.query;
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
 
-        const readings = await listReadings(req.userId, from, to);
+        const items = await listReadingsPage(req.userId, limit, offset);
+        const total = await countReadings(req.userId);
 
-        return res.status(200).json(readings);
+        return res.status(200).json({ items, total, page, limit });
     } catch (error) {
         console.error('Get readings failed:', error);
         return res.status(500).json({ error: 'Something went wrong. Please try again.' });
