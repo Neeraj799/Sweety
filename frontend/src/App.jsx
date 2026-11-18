@@ -1,10 +1,25 @@
-export default function App() {
-  return (
-    <main className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
-      <div className="mx-auto max-w-4xl p-4">
-        <h1 className="text-3xl font-bold text-pink-600">Sweety</h1>
-        <p className="text-gray-500">Blood glucose tracker — coming soon.</p>
-      </div>
-    </main>
-  )
-}
+import { Navigate, Route, Routes } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
+import PublicRoute from './components/PublicRoute.jsx';
+import DashboardPage from './pages/DashboardPage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import RegisterPage from './pages/RegisterPage.jsx';
+
+const App = () => {
+    return (
+        <Routes>
+            <Route element={<PublicRoute />}>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+            </Route>
+
+            <Route element={<ProtectedRoute />}>
+                <Route path="/" element={<DashboardPage />} />
+            </Route>
+
+            <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+    );
+};
+
+export default App;
