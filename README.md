@@ -14,18 +14,18 @@ A web app where a diabetes patient records up to 4 blood glucose readings a day 
 - Frontend tests for the reading form (Vitest + React Testing Library)
 - Doctor role: a doctor sees a list of their assigned patients and can view each patient's reports
 - Validation on both the frontend and the backend:
-    - value is a whole number between 40 and 600 mg/dl
-    - one reading per time slot per day, at most 4 readings per day
-    - date cannot be in the future
+  - value is a whole number between 40 and 600 mg/dl
+  - one reading per time slot per day, at most 4 readings per day
+  - date cannot be in the future
 
 ## Screenshots
 
-| Login | Dashboard with pagination |
-| ----- | ------------------------- |
+| Login                                   | Dashboard with pagination                       |
+| --------------------------------------- | ----------------------------------------------- |
 | ![Login](docs/screenshots/01-login.png) | ![Dashboard](docs/screenshots/02-dashboard.png) |
 
-| Add reading (validation) | Doctor: my patients |
-| ------------------------ | ------------------- |
+| Add reading (validation)                                       | Doctor: my patients                                         |
+| -------------------------------------------------------------- | ----------------------------------------------------------- |
 | ![Add reading](docs/screenshots/03-add-reading-validation.png) | ![Doctor patients](docs/screenshots/05-doctor-patients.png) |
 
 **Reports (Daily, Month-to-date, Monthly and the chart)**
@@ -38,12 +38,12 @@ A web app where a diabetes patient records up to 4 blood glucose readings a day 
 
 ## Tech stack
 
-| Part     | Tech                                                                 |
-| -------- | -------------------------------------------------------------------- |
-| Backend  | Node.js 24, Express 5, PostgreSQL (`pg`, no ORM), bcrypt, JWT, cookie-parser, Zod |
+| Part     | Tech                                                                                   |
+| -------- | -------------------------------------------------------------------------------------- |
+| Backend  | Node.js 24, Express 5, PostgreSQL (`pg`, no ORM), bcrypt, JWT, cookie-parser, Zod      |
 | Frontend | React 19, Vite, Tailwind CSS v4, React Router v7, axios, Zod, react-toastify, Recharts |
-| Tests    | Vitest, React Testing Library, jsdom                                 |
-| Docker   | Docker Compose with PostgreSQL 17, the backend, and nginx serving the frontend |
+| Tests    | Vitest, React Testing Library, jsdom                                                   |
+| Docker   | Docker Compose with PostgreSQL 17, the backend, and nginx serving the frontend         |
 
 ## Run with Docker (quickest)
 
@@ -58,11 +58,11 @@ Open http://localhost:5173 and log in with `demo@sweety.com` / `secret123` (pati
 
 Docker uses ports 5173 and 4800, so stop any `npm run dev` servers first.
 
-| Command                     | What it does                          |
-| --------------------------- | ------------------------------------- |
-| `docker compose logs backend` | Show the backend's output           |
-| `docker compose down`       | Stop everything (data is kept)        |
-| `docker compose down -v`    | Stop everything and delete the database |
+| Command                       | What it does                            |
+| ----------------------------- | --------------------------------------- |
+| `docker compose logs backend` | Show the backend's output               |
+| `docker compose down`         | Stop everything (data is kept)          |
+| `docker compose down -v`      | Stop everything and delete the database |
 
 ## Run without Docker
 
@@ -81,12 +81,13 @@ cp .env.example .env
 
 Fill in `backend/.env`:
 
-| Variable       | Example                                         |
-| -------------- | ----------------------------------------------- |
-| `DATABASE_URL` | `postgresql://user:password@host:5432/sweety`   |
-| `JWT_SECRET`   | any long random string (signs access tokens)    |
-| `JWT_REFRESH_SECRET` | a different long random string (signs refresh tokens) |
-| `PORT`         | `4800`                                          |
+| Variable             | Example                                                                         |
+| -------------------- | ------------------------------------------------------------------------------- |
+| `DATABASE_URL`       | `postgresql://user:password@host:5432/sweety`                                   |
+| `JWT_SECRET`         | any long random string (signs access tokens)                                    |
+| `JWT_REFRESH_SECRET` | a different long random string (signs refresh tokens)                           |
+| `PORT`               | `4800`                                                                          |
+| `NODE_ENV`           | `development` (use `production` only with HTTPS: it makes the cookies `secure`) |
 
 To make a random string: `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`
 
@@ -151,20 +152,20 @@ The tests are in `frontend/src/components/ReadingForm.test.jsx`. They run in a f
 
 Login and register set two httpOnly cookies: `accessToken` (15 minutes, sent to every route) and `refreshToken` (7 days, sent only to `/auth`). All `/readings`, `/reports` and `/doctor` routes need the `accessToken` cookie. Login and register return the user with their `role`.
 
-| Method | Route                       | Description                          |
-| ------ | --------------------------- | ------------------------------------ |
-| POST   | `/auth/register`            | Create an account, sets the cookies  |
-| POST   | `/auth/login`               | Log in, sets the cookies             |
-| POST   | `/auth/refresh`             | New access and refresh cookies from the refresh cookie |
-| POST   | `/auth/logout`              | Clear both cookies                   |
-| GET    | `/readings?page=1&limit=10` | List readings (newest first)         |
-| GET    | `/readings/:id`             | Get one reading                      |
-| POST   | `/readings`                 | Add a reading                        |
-| PUT    | `/readings/:id`             | Edit a reading                       |
-| DELETE | `/readings/:id`             | Delete a reading                     |
-| GET    | `/reports?date=2026-10-15`  | Daily, month-to-date and monthly reports (date defaults to today) |
-| GET    | `/doctor/patients`          | Doctor: list my patients             |
-| GET    | `/doctor/patients/:id/reports?date=2026-10-15` | Doctor: one patient's reports (only if assigned to me) |
+| Method | Route                                          | Description                                                       |
+| ------ | ---------------------------------------------- | ----------------------------------------------------------------- |
+| POST   | `/auth/register`                               | Create an account, sets the cookies                               |
+| POST   | `/auth/login`                                  | Log in, sets the cookies                                          |
+| POST   | `/auth/refresh`                                | New access and refresh cookies from the refresh cookie            |
+| POST   | `/auth/logout`                                 | Clear both cookies                                                |
+| GET    | `/readings?page=1&limit=10`                    | List readings (newest first)                                      |
+| GET    | `/readings/:id`                                | Get one reading                                                   |
+| POST   | `/readings`                                    | Add a reading                                                     |
+| PUT    | `/readings/:id`                                | Edit a reading                                                    |
+| DELETE | `/readings/:id`                                | Delete a reading                                                  |
+| GET    | `/reports?date=2026-10-15`                     | Daily, month-to-date and monthly reports (date defaults to today) |
+| GET    | `/doctor/patients`                             | Doctor: list my patients                                          |
+| GET    | `/doctor/patients/:id/reports?date=2026-10-15` | Doctor: one patient's reports (only if assigned to me)            |
 
 ## Project structure
 
@@ -192,3 +193,15 @@ frontend/
 
 docker-compose.yml   db + backend + frontend
 ```
+
+## Notes
+
+### What I would improve with more time
+
+- Let patients choose their doctor (or let an admin assign them) instead of using the seed script.
+- Add backend API tests and more frontend tests beyond the reading form.
+
+### Pending bonus tasks
+
+- **Redis caching:** cache report results in Redis and clear them when a reading is added, edited or deleted.
+- **BullMQ background job:** a daily job that logs a reminder for users with fewer than 4 readings that day.
