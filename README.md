@@ -18,6 +18,24 @@ A web app where a diabetes patient records up to 4 blood glucose readings a day 
     - one reading per time slot per day, at most 4 readings per day
     - date cannot be in the future
 
+## Screenshots
+
+| Login | Dashboard with pagination |
+| ----- | ------------------------- |
+| ![Login](docs/screenshots/01-login.png) | ![Dashboard](docs/screenshots/02-dashboard.png) |
+
+| Add reading (validation) | Doctor: my patients |
+| ------------------------ | ------------------- |
+| ![Add reading](docs/screenshots/03-add-reading-validation.png) | ![Doctor patients](docs/screenshots/05-doctor-patients.png) |
+
+**Reports (Daily, Month-to-date, Monthly and the chart)**
+
+![Reports](docs/screenshots/04-reports.png)
+
+**Doctor viewing a patient's reports**
+
+![Doctor viewing patient reports](docs/screenshots/06-doctor-patient-reports.png)
+
 ## Tech stack
 
 | Part     | Tech                                                                 |
