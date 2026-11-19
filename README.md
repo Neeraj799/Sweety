@@ -11,6 +11,7 @@ A web app where a diabetes patient records up to 4 blood glucose readings a day 
 - Dashboard with pagination
 - Reports for a selected date: **Daily**, **Month-to-date** and **Monthly** (previous month), each with highest, lowest, average and count
 - Line chart (Recharts) of the daily average for the month
+- Frontend tests for the reading form (Vitest + React Testing Library)
 - Validation on both the frontend and the backend:
     - value is a whole number between 40 and 600 mg/dl
     - one reading per time slot per day, at most 4 readings per day
@@ -22,6 +23,7 @@ A web app where a diabetes patient records up to 4 blood glucose readings a day 
 | -------- | -------------------------------------------------------------------- |
 | Backend  | Node.js 24, Express 5, PostgreSQL (`pg`, no ORM), bcrypt, JWT, cookie-parser, Zod |
 | Frontend | React 19, Vite, Tailwind CSS v4, React Router v7, axios, Zod, react-toastify, Recharts |
+| Tests    | Vitest, React Testing Library, jsdom                                 |
 | Docker   | Docker Compose with PostgreSQL 17, the backend, and nginx serving the frontend |
 
 ## Run with Docker (quickest)
@@ -100,6 +102,21 @@ This creates a demo user with readings for the last 60 days:
 - Email: `demo@sweety.com`
 - Password: `secret123`
 
+## Tests
+
+```bash
+cd frontend
+npm test
+```
+
+The tests are in `frontend/src/components/ReadingForm.test.jsx`. They run in a fake browser (jsdom) and use a fake API, so the backend does not need to be running. They check that the reading form:
+
+- starts empty for a new reading and pre-filled when editing
+- shows the right error for an empty value, a value outside 40–600, a decimal value, and a future date
+- sends the right data (`POST /readings` to add, `PUT /readings/:id` to edit)
+- shows the server's error message when saving fails
+- calls Cancel when the Cancel button is clicked
+
 ## API
 
 Login and register set two httpOnly cookies: `accessToken` (15 minutes, sent to every route) and `refreshToken` (7 days, sent only to `/auth`). All `/readings` and `/reports` routes need the `accessToken` cookie.
@@ -133,7 +150,7 @@ backend/
 
 frontend/src/
   pages/         Login, Register, Dashboard, Add/Edit reading, Reports
-  components/    Navbar, forms, ReadingList, ReportCard, route guards
+  components/    Navbar, forms, ReadingList, ReportCard, route guards, ReadingForm tests
   context/       auth state (the logged-in user)
   services/      axios instance (sends cookies, refreshes the access token on 401)
   validators/    the same Zod rules as the backend
