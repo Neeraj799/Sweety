@@ -201,7 +201,6 @@ docker-compose.yml   db + backend + frontend
 - Let patients choose their doctor (or let an admin assign them) instead of using the seed script.
 - Add backend API tests and more frontend tests beyond the reading form.
 
-### Pending bonus tasks
+- **BullMQ background job:** a daily job that logs a reminder for users with fewer than 4 readings that day.
 
 - **Redis caching:** cache report results in Redis and clear them when a reading is added, edited or deleted.
-- **BullMQ background job:** a daily job that logs a reminder for users with fewer than 4 readings that day.
