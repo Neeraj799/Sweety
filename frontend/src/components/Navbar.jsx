@@ -25,15 +25,24 @@ const Navbar = () => {
                 </Link>
 
                 <div className="flex items-center gap-4 text-sm">
-                    <NavLink to="/" end className={linkClass}>
-                        Dashboard
-                    </NavLink>
-                    <NavLink to="/readings/new" className={linkClass}>
-                        Add reading
-                    </NavLink>
-                    <NavLink to="/reports" className={linkClass}>
-                        Reports
-                    </NavLink>                </div>
+                    {user?.role === 'doctor' ? (
+                        <NavLink to="/" end className={linkClass}>
+                            My patients
+                        </NavLink>
+                    ) : (
+                        <>
+                            <NavLink to="/" end className={linkClass}>
+                                Dashboard
+                            </NavLink>
+                            <NavLink to="/readings/new" className={linkClass}>
+                                Add reading
+                            </NavLink>
+                            <NavLink to="/reports" className={linkClass}>
+                                Reports
+                            </NavLink>
+                        </>
+                    )}
+                </div>
 
                 <div className="flex items-center gap-3">
                     <span className="hidden text-gray-700 sm:inline dark:text-gray-300">

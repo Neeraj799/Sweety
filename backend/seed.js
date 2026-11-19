@@ -6,6 +6,7 @@ import { getToday } from './utils/date.js';
 
 const DEMO_EMAIL = 'demo@sweety.com';
 const DEMO_PASSWORD = 'secret123';
+const DOCTOR_EMAIL = 'doctor@sweety.com';
 const DAYS = 60;
 
 const RANGES = {
@@ -30,6 +31,15 @@ const seed = async () => {
         const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
         user = await createUser('Demo User', DEMO_EMAIL, passwordHash);
     }
+
+    let doctor = await findUserByEmail(DOCTOR_EMAIL);
+    if (!doctor) {
+        const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
+        doctor = await createUser('Dr. Demo', DOCTOR_EMAIL, passwordHash);
+    }
+
+    await pool.query("UPDATE users SET role = 'doctor' WHERE id = $1", [doctor.id]);
+    await pool.query('UPDATE users SET doctor_id = $1 WHERE id = $2', [doctor.id, user.id]);
 
     await pool.query('DELETE FROM readings WHERE user_id = $1', [user.id]);
 
@@ -57,6 +67,7 @@ const seed = async () => {
 
     console.log(`Seeded ${values.length} readings over ${DAYS} days for ${DEMO_EMAIL}`);
     console.log(`Log in with: ${DEMO_EMAIL} / ${DEMO_PASSWORD}`);
+    console.log(`Doctor login: ${DOCTOR_EMAIL} / ${DEMO_PASSWORD}`);
     await pool.end();
 };
 

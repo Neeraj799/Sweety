@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import ErrorMessage from '../components/ErrorMessage.jsx';
 import FormInput from '../components/FormInput.jsx';
 import PageLayout from '../components/PageLayout.jsx';
@@ -8,6 +9,8 @@ import { api } from '../services/api.js';
 import { getToday } from '../utils/date.js';
 
 const ReportsPage = () => {
+    const { id } = useParams();
+    const url = id ? `/doctor/patients/${id}/reports` : '/reports';
     const [date, setDate] = useState(getToday());
     const [reports, setReports] = useState(null);
     const [error, setError] = useState('');
@@ -17,7 +20,7 @@ const ReportsPage = () => {
 
         const loadReports = async () => {
             try {
-                const { data } = await api.get('/reports', { params: { date } });
+                const { data } = await api.get(url, { params: { date } });
                 if (isOutdated) {
                     return;
                 }
@@ -36,10 +39,10 @@ const ReportsPage = () => {
         return () => {
             isOutdated = true;
         };
-    }, [date]);
+    }, [date, url]);
 
     return (
-        <PageLayout title="Reports">
+        <PageLayout title={reports?.patient ? `Reports for ${reports.patient.name}` : 'Reports'}>
             <div className="max-w-xs">
                 <FormInput
                     label="Date"
@@ -53,7 +56,7 @@ const ReportsPage = () => {
             <ErrorMessage message={error} />
 
             {reports === null ? (
-                <p className="text-gray-500 dark:text-gray-400">Loading…</p>
+                !error && <p className="text-gray-500 dark:text-gray-400">Loading…</p>
             ) : (
                 <>
                     <div className="grid gap-4 md:grid-cols-3">
