@@ -1,13 +1,13 @@
-import { verifyToken } from '../utils/token.js';
+import { verifyAccessToken } from '../utils/token.js';
 
 export const requireAuth = (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
+        const token = req.cookies.accessToken;
         if (!token) {
             return res.status(401).json({ error: 'Please log in.' });
         }
 
-        const payload = verifyToken(token);
+        const payload = verifyAccessToken(token);
         req.userId = Number(payload.sub);
 
         return next();

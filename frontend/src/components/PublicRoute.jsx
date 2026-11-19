@@ -2,9 +2,9 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 
 const PublicRoute = () => {
-    const { token } = useAuth();
+    const { user } = useAuth();
 
-    return token ? <Navigate to="/" /> : <Outlet />;
+    return user ? <Navigate to="/" /> : <Outlet />;
 };
 
 export default PublicRoute;

@@ -4,7 +4,8 @@ A web app where a diabetes patient records up to 4 blood glucose readings a day 
 
 ## Features
 
-- Register and log in (passwords hashed with bcrypt, JWT auth)
+- Register and log in (passwords hashed with bcrypt)
+- JWT access token (15 minutes) and refresh token (7 days), both in httpOnly cookies; the frontend refreshes the access token automatically
 - Each user sees only their own readings
 - Add, view, edit and delete readings (date, time slot, value in mg/dl)
 - Dashboard with pagination
@@ -19,7 +20,7 @@ A web app where a diabetes patient records up to 4 blood glucose readings a day 
 
 | Part     | Tech                                                                 |
 | -------- | -------------------------------------------------------------------- |
-| Backend  | Node.js 24, Express 5, PostgreSQL (`pg`, no ORM), bcrypt, JWT, Zod    |
+| Backend  | Node.js 24, Express 5, PostgreSQL (`pg`, no ORM), bcrypt, JWT, cookie-parser, Zod |
 | Frontend | React 19, Vite, Tailwind CSS v4, React Router v7, axios, Zod, react-toastify, Recharts |
 | Docker   | Docker Compose with PostgreSQL 17, the backend, and nginx serving the frontend |
 
@@ -62,8 +63,11 @@ Fill in `backend/.env`:
 | Variable       | Example                                         |
 | -------------- | ----------------------------------------------- |
 | `DATABASE_URL` | `postgresql://user:password@host:5432/sweety`   |
-| `JWT_SECRET`   | any long random string                          |
+| `JWT_SECRET`   | any long random string (signs access tokens)    |
+| `JWT_REFRESH_SECRET` | a different long random string (signs refresh tokens) |
 | `PORT`         | `4800`                                          |
+
+To make a random string: `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`
 
 ```bash
 npm run dev
@@ -98,12 +102,14 @@ This creates a demo user with readings for the last 60 days:
 
 ## API
 
-All `/readings` and `/reports` routes need an `Authorization: Bearer <token>` header.
+Login and register set two httpOnly cookies: `accessToken` (15 minutes, sent to every route) and `refreshToken` (7 days, sent only to `/auth`). All `/readings` and `/reports` routes need the `accessToken` cookie.
 
 | Method | Route                       | Description                          |
 | ------ | --------------------------- | ------------------------------------ |
-| POST   | `/auth/register`            | Create an account                    |
-| POST   | `/auth/login`               | Log in, returns a token              |
+| POST   | `/auth/register`            | Create an account, sets the cookies  |
+| POST   | `/auth/login`               | Log in, sets the cookies             |
+| POST   | `/auth/refresh`             | New access and refresh cookies from the refresh cookie |
+| POST   | `/auth/logout`              | Clear both cookies                   |
 | GET    | `/readings?page=1&limit=10` | List readings (newest first)         |
 | GET    | `/readings/:id`             | Get one reading                      |
 | POST   | `/readings`                 | Add a reading                        |
@@ -119,8 +125,8 @@ backend/
   controllers/   request handling and business rules
   models/        SQL queries
   validators/    Zod schemas
-  middleware/    requireAuth (JWT check)
-  utils/         dates and tokens
+  middleware/    requireAuth (checks the accessToken cookie)
+  utils/         dates, tokens and auth cookies
   schema.sql     database tables
   seed.js        demo data
   Dockerfile
@@ -128,8 +134,8 @@ backend/
 frontend/src/
   pages/         Login, Register, Dashboard, Add/Edit reading, Reports
   components/    Navbar, forms, ReadingList, ReportCard, route guards
-  context/       auth state (token + user)
-  services/      axios instance (adds the token, handles expired logins)
+  context/       auth state (the logged-in user)
+  services/      axios instance (sends cookies, refreshes the access token on 401)
   validators/    the same Zod rules as the backend
 frontend/
   Dockerfile     builds the app, then serves it with nginx

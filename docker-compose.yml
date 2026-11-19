@@ -17,6 +17,7 @@ services:
         environment:
             DATABASE_URL: postgres://sweety:sweety@db:5432/sweety
             JWT_SECRET: local-docker-secret
+            JWT_REFRESH_SECRET: local-docker-refresh-secret
             PORT: 4800
         ports:
             - '4800:4800'
